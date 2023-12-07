@@ -5,6 +5,7 @@ Param(
         Position=1,
         Mandatory=$False
         )]
+        [ValidateNotNull()]
         [string]$Path = "C:\Temp\ISODownloader",
     [Parameter(
         Position=2,
@@ -22,6 +23,7 @@ Param(
         Position=4,
         Mandatory=$False
         )]
+        [ValidateNotNull()]
         [string]$Lang = "en-us"
     )
 
@@ -54,7 +56,7 @@ ElseIf ($Arch -eq 'ARM')
 
 # Script wide variables used by *-Log functions:
 $TimeStamp = [System.DateTime]::Now.ToString("yyyy-MM-dd_HH-mm-ss")
-$LogFile = $env:TEMP + "\" + $env:COMPUTERNAME + "__" + $TimeStamp + "__" + $Device + "__Download-WindowsESD.log"
+$LogFile = $env:TEMP + "\" + $env:COMPUTERNAME + "__" + $TimeStamp + "__Download-WindowsESD.log"
 $Script:ConsoleOutput = $True
 $Script:ForegroundColor = "White"
 
@@ -179,7 +181,7 @@ Function Check-PathExists
         }
         Catch
         {
-            Write-Log -Message "[$TimeStamp] Error: $_"
+            Write-Log -Message "Error: $_"
         }
     }
 }
@@ -208,7 +210,7 @@ Function Extract-File
         }
         Catch
         {
-            Write-Log -Message "[$TimeStamp] Error: $_"
+            Write-Log -Message "Error: $_"
         }
     }
     ElseIf ($FileExtension -eq '.cab')
@@ -232,7 +234,7 @@ Function Extract-File
         }
         Catch
         {
-            Write-Log -Message "[$TimeStamp] Error: $_"
+            Write-Log -Message "Error: $_"
         }
         
     }
@@ -246,7 +248,7 @@ Function Extract-File
         }
         Catch
         {
-            Write-Log -Message "[$TimeStamp] Error: $_"
+            Write-Log -Message "Error: $_"
         }
     }
 }
@@ -306,7 +308,7 @@ Function Download-File
         }
         Catch
         {
-            Write-Log -Message "[$TimeStamp] Error: $_"
+            Write-Log -Message "Error: $_"
         }
     }
     Else
@@ -454,7 +456,7 @@ Function Create-LatestWindowsISO
             }
             Catch
             {
-                Write-Log -Message "[$TimeStamp] Error: $_"
+                Write-Log -Message "Error: $_"
             }
         }
     }
@@ -463,7 +465,7 @@ Function Create-LatestWindowsISO
     Write-Log -Message "Creating $($ISO) from contents of $($Mount)..."
     Push-Location $Mount
     # This will throw an error, but will work - oscdimg does *not* seem to like being called from Powershell any other way though that I can find...
-    & "$($kitsRoot)Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe" "-l$ImageVersion"  '-o' '-u2' '-m' '-udfver102' "-bootdata:1#pEF,e,bEFI\Microsoft\boot\efisys.bin" "$Mount" "$ISO" | Out-Host
+    & "$($KitsRoot)Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe" "-l$ImageVersion"  '-o' '-u2' '-m' '-udfver102' "-bootdata:1#pEF,e,bEFI\Microsoft\boot\efisys.bin" "$Mount" "$ISO" | Out-Host
     Pop-Location
     Write-Host ""
 
